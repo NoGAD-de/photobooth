@@ -545,7 +545,7 @@ const photoBooth = (function () {
                         ioClient.emit('photobooth-socket', 'completed');
                     }
                 } else {
-                    api.renderPic(data.file);
+                    api.renderPic(data.file, photoStyle);
                 }
             },
             error: (jqXHR, textStatus) => {
@@ -563,7 +563,7 @@ const photoBooth = (function () {
     };
 
     // Render Picture after taking
-    api.renderPic = function (filename) {
+    api.renderPic = function (filename, photoStyle) {
         // Add QR Code Image
         const qrCodeModal = $('#qrCode');
         modal.empty(qrCodeModal);
@@ -620,11 +620,14 @@ const photoBooth = (function () {
 
         const preloadImage = new Image();
         preloadImage.onload = () => {
+            if (photoStyle === 'collage' && (config.collage_layout === '2x4' || config.collage_layout === '2x4BI')) {
+                resultPage.css('transform', 'rotate(90deg)');
+                $('.stages').css('height', '70%');
+            }
             resultPage.css({
                 'background-image': `url(${imageUrl}?filter=${imgFilter})`
             });
             resultPage.attr('data-img', filename);
-
             startPage.hide();
             resultPage.show();
 
